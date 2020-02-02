@@ -100,7 +100,7 @@ class WordpressHomePage {
   
   static addPost() {
 	  cy.visit('/block-editor/post/34072.home.blog');
-	  cy.wait(6000)
+	  cy.wait(10000)
 	     cy.get(USERNAME_TEXTBOX) 
       .type(USERNAME);
 	  cy.get(CONTINUE_BUTTON).
