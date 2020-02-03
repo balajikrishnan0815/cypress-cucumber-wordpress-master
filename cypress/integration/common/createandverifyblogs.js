@@ -10,11 +10,7 @@ When(/^Press Log In link$/, () => {
 });
 
 When(/^I login to Wordpress using (.+) and (.+)$/, (username,password) => {
- WordpressHomePage.typeUserName(username);
- WordpressHomePage.clickContinueOrLogin();
- WordpressHomePage.typePassword(password);
- WordpressHomePage.clickContinueOrLogin();
- WordpressHomePage.waitForFiveSeconds();
+ WordpressHomePage.loginToWordpress(username,password);
 });
 
 Then(/^I verify login is successful$/, () => {
@@ -26,8 +22,15 @@ When(/^I navigate to blog page$/, () => {
 	WordpressHomePage.verifyBlogPage();
 });
 
+Then(/^I close popup dialog$/, () => {
+	  WordpressHomePage.closeDialog();
+	});
+
 When(/^I click on create post$/, () => {
+	WordpressHomePage.navigateToWriteBlog();
+	WordpressHomePage.waitForTenSeconds();
 	WordpressHomePage.addPost();
+	WordpressHomePage.waitForFifteenSeconds();
 });
 
 When(/^I create blog using (.+),(.+) and (.+)$/, (blogTitle,imageURL,imageCaption) => {
@@ -41,11 +44,3 @@ Then(/^I verify create blog using (.+)$/, (blogTitle) => {
 Given(/^I logout from Wordpress$/, () => {
 	  WordpressHomePage.logoutWordPress();
 	});
-
-Then(/^I close popup dialog$/, () => {
-	  WordpressHomePage.closeDialog();
-	});
-
-
-
-

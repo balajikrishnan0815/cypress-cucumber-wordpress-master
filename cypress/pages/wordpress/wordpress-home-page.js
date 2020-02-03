@@ -1,5 +1,3 @@
-
-
 const USERNAME='balajikrishnan0815@gmail.com';
 const PASSWORD='Password@123';
 const USERNAME_TEXTBOX='input[name=usernameOrEmail]';
@@ -31,9 +29,19 @@ const CREATEDPOSTTITLE='a[class=post-item__title-link]';
 const PUBLISHEDTAB='a[href*="posts/34072"] > span[class*=section-nav-tab__text]';
 const CLOSEDIALOG='button[aria-label="Close dialog"]';
 const WRITEPOST='a[title="Create a New Post"]';
+const clickElement = (element) =>   cy.get(element).click();
+const enterTextInElement = (element,text) =>   cy.get(element) .type(text);
 
-
-
+const switchToBlogFrameClickElement = (element) =>  cy.get('#primary > div > iframe').then($iframe => {
+    const iframe = $iframe.contents();
+    const webElement = iframe.find(element);
+    cy.wrap(webElement).click();
+});
+const switchToBlogFrameEnterTexInElement = (element,text) =>  cy.get('#primary > div > iframe').then($iframe => {
+    const iframe = $iframe.contents();
+    const webElement = iframe.find(element);
+    cy.wrap(webElement).type(text);
+});
 
 class WordpressHomePage {
   static visit() {
@@ -41,44 +49,32 @@ class WordpressHomePage {
   }
   
   static navigateToBlogPage() {
-	    cy.visit('/');
-	    
+	cy.visit('/');  
+	  }
+ 
+  static loginToWordpress(username,password) {
+	  enterTextInElement(USERNAME_TEXTBOX,username);
+	  clickElement(CONTINUE_BUTTON);
+	  enterTextInElement(PASSWORD_TEXTBOX,password);
+	  clickElement(CONTINUE_BUTTON);
+	  WordpressHomePage.waitForFiveSeconds();
 	  }
   
-
-  static typeUserName(query) {
-    cy.get(USERNAME_TEXTBOX) 
-      .type(query);
-  }
-  
-  static typePassword(query) {
-	    cy.get(PASSWORD_TEXTBOX) 
-	      .type(query);
-	  }
-
-  static clickLoginLink(query) {
-	   cy.get('a').contains(LOGIN_TEXT)
-	      .click();
-	  }
-  
-  static clickContinueOrLogin() {
-	   cy.get(CONTINUE_BUTTON).
-	      click();
+  static clickLoginLink() {
+	  clickElement(LOGIN_BUTTON);
+	  
 	  }
   
   static clickCreatePost() {
-	   cy.get(CREATEPOST_BUTTON).
-	      click();
+	  clickElement(CREATEPOST_BUTTON);
 	  }
   
   static clickPostOptionFromLeftSideBar() {
-	   cy.get(POST_OPTION).
-	      click();
+	  clickElement(POST_OPTION);
 	  }
   
   static clickMySite() {
-	  cy.get(MYSITE_OPTION).
-      click();
+	  clickElement(MYSITE_OPTION);
 	  }
   
   static verifySuccessfulLogin() {
@@ -91,114 +87,71 @@ class WordpressHomePage {
 	  cy.url().should('include', '.blog')
 	  }
   
+  static waitForTwoSeconds() {
+	  cy.wait(2000)
+	  }
   static waitForFiveSeconds() {
 	  cy.wait(5000)
+	  }
+  
+  static waitForEightSeconds() {
+	  cy.wait(8000)
 	  }
   static waitForTenSeconds() {
 	  cy.wait(10000)
 	  }
+  static waitForFifteenSeconds() {
+	  cy.wait(15000)
+	  }
   
-  static addPost() {
+  static navigateToWriteBlog() {
 	  cy.visit('/block-editor/post/34072.home.blog');
-	  cy.wait(10000)
-	     cy.get(USERNAME_TEXTBOX) 
-      .type(USERNAME);
-	  cy.get(CONTINUE_BUTTON).
-	  click();
-	  cy.get(PASSWORD_TEXTBOX) 
-	  .type(PASSWORD);
-	  cy.get(CONTINUE_BUTTON).
-	  click(); 
-      cy.wait(15000)
+  }
+  static addPost() {
+	  enterTextInElement(USERNAME_TEXTBOX,username);
+	  clickElement(CONTINUE_BUTTON);
+	  enterTextInElement(PASSWORD_TEXTBOX,password);
+	  clickElement(CONTINUE_BUTTON);
 	  }
   
   static closeDialog() {
-	  cy.get(WRITEPOST).
-	  click();
-	  cy.wait(15000)
+	  clickElement(WRITEPOST);
+	  WordpressHomePage.waitForFifteenSeconds();
 	  cy.get('#primary > div > iframe').then($iframe => {
 		    const iframe = $iframe.contents();
 		    const closeDialog = iframe.find(CLOSEDIALOG);
+		    if( iframe.find(CLOSEDIALOG).length>0)
 		    cy.wrap(closeDialog).click();
 		});
   }
+  
   static createPost(blogTitle,imageURL,imageCaption) {
-	  cy.get('#primary > div > iframe').then($iframe => {
-		    const iframe = $iframe.contents();
-		    const addTitle = iframe.find(BLOGTITLE);
-		    cy.wrap(addTitle).type(blogTitle);
-		});
-	  
-	  cy.get('#primary > div > iframe').then($iframe => {
-		    const iframe = $iframe.contents();
-		    const addIcon = iframe.find(ADDICON);
-		    cy.wrap(addIcon).click();
-		});
-	  
-	  cy.get('#primary > div > iframe').then($iframe => {
-		    const iframe = $iframe.contents();
-		    const addImage = iframe.find(ADDIMAGE);
-		    cy.wrap(addImage).click();
-		});
-	  
-	  cy.get('#primary > div > iframe').then($iframe => {
-		    const iframe = $iframe.contents();
-		    const insertImageUrl= iframe.find(INSERTIMAGEURL);
-		    cy.wrap(insertImageUrl).click();
-		});
-	  
-	  cy.get('#primary > div > iframe').then($iframe => {
-		    const iframe = $iframe.contents();
-		    const typeUrl= iframe.find(TYPEURL);
-		    cy.wrap(typeUrl).type(imageURL);
-		});
-	  
-	  cy.get('#primary > div > iframe').then($iframe => {
-		    const iframe = $iframe.contents();
-		    const uploadImageUrl= iframe.find(UPLOADIMAGEURL);
-		    cy.wrap(uploadImageUrl).click();
-		});
-	  
-	  cy.get('#primary > div > iframe').then($iframe => {
-		    const iframe = $iframe.contents();
-		    const imageTitle= iframe.find(IMAGECAPTION);
-		    cy.wrap(imageTitle).type(imageCaption);
-		});
-	  
-	  cy.get('#primary > div > iframe').then($iframe => {
-		    const iframe = $iframe.contents();
-		    const publish= iframe.find(PUBLISH);
-		    cy.wrap(publish).click();
-		});
-	  
-	  cy.get('#primary > div > iframe').then($iframe => {
-		    const iframe = $iframe.contents();
-		    const postPublish = iframe.find(POSTPUBLISH);
-		    cy.wrap(postPublish) .click();
-		});
-	  cy.wait(7000)
+	  switchToBlogFrameEnterTexInElement(BLOGTITLE,blogTitle);
+	  switchToBlogFrameClickElement(ADDICON);
+	  switchToBlogFrameClickElement(ADDIMAGE);
+	  switchToBlogFrameClickElement(INSERTIMAGEURL);
+	  switchToBlogFrameEnterTexInElement(TYPEURL,imageURL);
+	  switchToBlogFrameClickElement(UPLOADIMAGEURL);
+	  switchToBlogFrameEnterTexInElement(IMAGECAPTION,imageCaption);
+	  switchToBlogFrameClickElement(PUBLISH);
+	  switchToBlogFrameClickElement(POSTPUBLISH);
+	  WordpressHomePage.waitForEightSeconds();
 	  }
-		  
-	  
+		    
   static verifyCreatedPost(blogTitle) {
 	  cy.visit('/posts/34072.home.blog');
-	  cy.wait(2000)
-	  cy.get(PUBLISHEDTAB).
-	  click();
-	  cy.wait(2000)
+	  WordpressHomePage.waitForTwoSeconds();
+	  clickElement(PUBLISHEDTAB);
+	  WordpressHomePage.waitForTwoSeconds();
 	 cy.get(CREATEDPOSTTITLE).should('have.attr', 'data-e2e-title', blogTitle)
 	 
   }
   
-  
   static logoutWordPress() {
-	  cy.get(PROFILEICON).click();
-	    cy.get(LOGOUT_BUTTON)
-	      .click();
-	    cy.get(SIGNIN_BUTTON).should('be.visible')
+	  clickElement(PROFILEICON);
+	  clickElement(LOGOUT_BUTTON);
+	  cy.get(SIGNIN_BUTTON).should('be.visible')
 	  }
-
-  
 }
 
 export default WordpressHomePage;
